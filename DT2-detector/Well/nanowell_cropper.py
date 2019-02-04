@@ -54,7 +54,7 @@ def CROP_IMAGES(Args):
     
     img = io.imread(fname_in)
     # rescale the intensity of image to the full range of histogram
-    img = skimage.rescale_intensity(img, in_range='image', out_range='dtype')
+    img = exposure.rescale_intensity(img, in_range='image', out_range='dtype')
 
     folder_dir_8bit = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_8bit_s/'
     folder_dir_16bit = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_16bit_s/'
