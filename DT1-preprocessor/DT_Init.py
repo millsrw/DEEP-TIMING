@@ -31,6 +31,7 @@ def DT_Init_Block(BLOCK_PATH):
     os.system('mkdir ' + BLOCK_PATH + 'images/')
     os.system('mkdir ' + BLOCK_PATH + 'images/crops_8bit_s/')
     os.system('mkdir ' + BLOCK_PATH + 'images/crops_16bit_s/')
+    os.system('mkdir ' + BLOCK_PATH + 'images/crops_vis/')
     
     # make labels directory
     os.system('mkdir ' + BLOCK_PATH + 'labels/')

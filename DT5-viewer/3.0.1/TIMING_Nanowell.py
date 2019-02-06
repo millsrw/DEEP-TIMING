@@ -390,7 +390,7 @@ class TIMING_Nanowell(QFrame):
 
 
 	def getImagePath(self, CH):
-		path = self.path + "B" + str(self.BID).zfill(3) + "/images/crops_8bit_s/imgNo" + str(self.Well_ID) + "CH" + str(CH) + "/imgNo" + str(self.Well_ID) + "CH" + str(CH) + "_t" + str(self.t) + ".tif"
+		path = self.path + "B" + str(self.BID).zfill(3) + "/images/crops_vis/imgNo" + str(self.Well_ID) + "CH" + str(CH) + "/imgNo" + str(self.Well_ID) + "CH" + str(CH) + "_t" + str(self.t) + ".tif"
 		#print path
 		return path
 

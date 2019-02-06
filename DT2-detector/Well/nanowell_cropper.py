@@ -53,16 +53,19 @@ def CROP_IMAGES(Args):
     gamma = Args[11]
     
     img = io.imread(fname_in)
-    # rescale the intensity of image to the full range of histogram
-    img = exposure.rescale_intensity(img, in_range='image', out_range='dtype')
+    # rescale the intensity of image to the full range of histogram for visualization
+    img_corrected = exposure.rescale_intensity(img, in_range='image', out_range='dtype')
 
     folder_dir_8bit = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_8bit_s/'
     folder_dir_16bit = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_16bit_s/'
+    folder_dir_vis = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_vis/'
 
     total_nanowell = len(meta_all_clean)
     for idx in range(1, total_nanowell+1):
         img_crop_fname_8bit = folder_dir_8bit + 'imgNo' + str(idx) + CH + '/imgNo' + str(idx) + CH + '_t' + str(t) + '.tif'
         img_crop_fname_16bit = folder_dir_16bit + 'imgNo' + str(idx) + CH + '/imgNo' + str(idx) + CH + '_t' + str(t) + '.tif'
+        img_crop_fname_vis = folder_dir_vis + 'imgNo' + str(idx) + CH + '/imgNo' + str(idx) + CH + '_t' + str(t) + '.tif'
+
         x_center = meta_all_clean[idx-1][0]
         y_center = meta_all_clean[idx-1][1]
         
@@ -71,12 +74,13 @@ def CROP_IMAGES(Args):
             if crop_16bit == True:
                 io.imsave(img_crop_fname_16bit, img[y_center-140:y_center+141, x_center-140:x_center+141])
             if crop_8bit == True:
-                io.imsave(img_crop_fname_8bit, skimage.img_as_ubyte(img[y_center-140:y_center+141, x_center-140:x_center+141]))
-                # io.imsave(img_crop_fname_8bit, scale_image_faster(img[y_center-140:y_center+141, x_center-140:x_center+141], clip_min, clip_max, gamma))
+                io.imsave(img_crop_fname_8bit, scale_image_faster(img[y_center-140:y_center+141, x_center-140:x_center+141], clip_min, clip_max, gamma))
+            # save corrected (histogram stretched) images for visualization only
+            io.imsave(img_crop_fname_vis, img_corrected[y_center-140:y_center+141, x_center-140:x_center+141])
 
 
                 
-def CROP_IMAGES_BLOCK(RAW_INPUT_PATH, OUTPUT_PATH, DATASET, BLOCK, FRAMES, Output_Type, channel_index_dict, CORES, Nanowell_Size, Block_Size, CLIP_ARGS, GAMMA):         
+def CROP_IMAGES_BLOCK(RAW_INPUT_PATH, OUTPUT_PATH, DATASET, BLOCK, FRAMES, Output_Type, channel_index_dict, CORES, Nanowell_Size, Block_Size, CLIP_ARGS, GAMMA):
     
     # Clean Nanowell Information
     meta_fname = OUTPUT_PATH + DATASET + '/' + BLOCK  + '/meta/a_centers.txt'
@@ -104,6 +108,8 @@ def CROP_IMAGES_BLOCK(RAW_INPUT_PATH, OUTPUT_PATH, DATASET, BLOCK, FRAMES, Outpu
     total_nanowell = len(meta_all_clean)
     folder_dir = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_8bit_s/'
     folder_dir_16bit = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_16bit_s/'
+    folder_dir_vis = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_vis/'
+
     for idx in range(1, total_nanowell+1):
         temp_folder_name_CH0 = folder_dir + '/imgNo'+str(idx)+'CH0'
         temp_folder_name_CH1 = folder_dir + '/imgNo'+str(idx)+'CH1'
@@ -117,9 +123,15 @@ def CROP_IMAGES_BLOCK(RAW_INPUT_PATH, OUTPUT_PATH, DATASET, BLOCK, FRAMES, Outpu
         os.system('mkdir ' + temp_folder_name_CH3)
         temp_folder_name_CH1 = folder_dir_16bit + '/imgNo'+str(idx)+'CH1'
         os.system('mkdir ' + temp_folder_name_CH1)
-   
+
+        # create folders for visualization
+        os.system('mkdir ' + folder_dir_vis + '/imgNo'+str(idx)+'CH0')
+        os.system('mkdir ' + folder_dir_vis + '/imgNo'+str(idx)+'CH1')
+        os.system('mkdir ' + folder_dir_vis + '/imgNo'+str(idx)+'CH2')
+        os.system('mkdir ' + folder_dir_vis + '/imgNo'+str(idx)+'CH3')
+
     Parameter_List = [] # contains [fname_in, CH, meta_all_clean ,8bit?, 16bit?]
-    
+
     for CH in Output_Type["uint8"]:
         for t in range(1, 1+FRAMES):
             temp = []
