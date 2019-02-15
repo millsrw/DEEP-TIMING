@@ -78,7 +78,7 @@ def CROP_IMAGES(Args):
                 io.imsave(img_crop_fname_16bit, img[y_center - 140:y_center + 141, x_center - 140:x_center + 141])
             if crop_8bit == True:
                 # io.imsave(img_crop_fname_8bit, scale_image_faster(img[y_center-140:y_center+141, x_center-140:x_center+141], clip_min, clip_max, gamma))
-                io.imsave(img_crop_fname_vis,
+                io.imsave(img_crop_fname_8bit,
                           img_corrected[y_center - 140:y_center + 141, x_center - 140:x_center + 141])
             # save corrected (histogram stretched) images for visualization only
             io.imsave(img_crop_fname_vis, img_corrected[y_center - 140:y_center + 141, x_center - 140:x_center + 141])
