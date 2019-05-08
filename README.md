@@ -62,4 +62,4 @@ Deep learning algorithms show top performance on image classification and object
 2.The evaluation data, scripts are included in the [Supplementary Materials](). And the evaluation steps can be fould [here](https://github.com/troylhy1991/DEEP-TIMING/tree/master/docs)
 
 ## Contact
-Email: hlu9@uh.edu
+Email: broysam@central.uh.edu
