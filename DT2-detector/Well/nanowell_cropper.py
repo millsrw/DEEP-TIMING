@@ -7,6 +7,105 @@ from skimage import io, exposure
 
 import warnings
 from multiprocessing import Pool
+from sklearn.cluster import KMeans  ### row col index fix
+
+#####################################################################################
+########################################Row and Column Index Update #################
+def load_nanowells(a_center_fname):
+    ''''''
+    f = open(a_center_fname)
+    lines = f.readlines()
+    f.close()
+
+    nanowells = []
+
+    for line in lines:
+        line = line.rstrip().split('\t')
+        line = [float(i) for i in line]
+        nanowells.append(line)
+
+    return nanowells
+
+
+def write_nanowells_new(a_center_fname_new, nanowells):
+
+    f = open(a_center_fname_new, 'w')
+
+    for nanowell in nanowells:
+        temp = nanowell[0:5]
+        temp = [int(temp[0]), int(temp[1]), int(temp[2]), float(temp[3]), int(temp[4])]
+        temp = [str(i) for i in temp]
+        temp = '\t'.join(temp) + '\n'
+        f.writelines(temp)
+
+    f.close()
+
+    return 1
+
+
+def sort_nanowell(a_center_fname, a_center_clean_fname, a_center_clean_sorted_fname, RC):
+    '''
+        This function will load the full nanowell file a_center.txt, create approximate grid using k-means;
+        Sort nanowells in a_center_clean based on real Row and Column coordinates
+    '''
+
+    ### Step 1: load a_center.txt
+    org_nanowells = load_nanowells(a_center_fname)
+
+    clean_nanowells = load_nanowells(a_center_clean_fname)
+
+    ### Step 2: get row_coords, col_coords
+    row_margin = []
+    col_margin = []
+
+    for nanowell in org_nanowells:
+        row_margin.append([nanowell[0], 0])
+        col_margin.append([0,nanowell[1]])
+
+    row_margin = np.array(row_margin)
+    col_margin = np.array(col_margin)
+
+    kmeans_row = KMeans(n_clusters=RC, random_state=0).fit(row_margin)
+    kmeans_col = KMeans(n_clusters=RC, random_state=0).fit(col_margin)
+
+    row_coords = kmeans_row.cluster_centers_
+    col_coords = kmeans_col.cluster_centers_
+
+    row_coords_flat = sorted([int(i[0]) for i in row_coords])
+    col_coords_flat = sorted([int(j[1]) for j in col_coords])
+
+    ### Step 3: update clean_nanowells --> clean_nanowells_RC
+    index_nanowells = []
+    for nanowell in clean_nanowells:
+        R = 1
+        d0 = 2048
+        for i in range(RC):
+            d = abs(nanowell[0]-row_coords_flat[i])
+            if d<d0:
+                d0 = d
+                R = i + 1
+
+        C = 1
+        d0 = 2048
+        for j in range(RC):
+            d = abs(nanowell[1]-col_coords_flat[j])
+            if d<d0:
+                d0 = d
+                C = j + 1
+
+        index = RC*(R-1) + C
+        nanowell.append(index)
+        index_nanowells.append(nanowell)
+
+    sorted_nanowells = sorted(index_nanowells, key=lambda l:l[4])
+
+    ### Step 4: write clean_nanowells_RC to file a_center_sorted_fname
+
+    write_nanowells_new(a_center_clean_sorted_fname, sorted_nanowells)
+
+    return sorted_nanowells
+
+#####################################################################################
 
 
 def write_nanowell_info(fname, info_array):
@@ -39,6 +138,7 @@ def scale_image_faster(img, clip_min, clip_max, gamma):
 
 
 def CROP_IMAGES(Args):
+    #called upon by CROP_IMAGES_BLOCK 
     fname_in = Args[0]
     OUTPUT_PATH = Args[1]
     DATASET = Args[2]
@@ -60,6 +160,7 @@ def CROP_IMAGES(Args):
     folder_dir_16bit = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_16bit_s/'
     folder_dir_vis = OUTPUT_PATH + DATASET + '/' + BLOCK + '/images/crops_vis/'
 
+    #choose the correct name 
     total_nanowell = len(meta_all_clean)
     for idx in range(1, total_nanowell + 1):
         img_crop_fname_8bit = folder_dir_8bit + 'imgNo' + str(idx) + CH + '/imgNo' + str(idx) + CH + '_t' + str(
@@ -69,9 +170,11 @@ def CROP_IMAGES(Args):
         img_crop_fname_vis = folder_dir_vis + 'imgNo' + str(idx) + CH + '/imgNo' + str(idx) + CH + '_t' + str(
             t) + '.tif'
 
-        x_center = meta_all_clean[idx - 1][0]
-        y_center = meta_all_clean[idx - 1][1]
+        #select the centroid of the sorted nanowell 
+        x_center = int(meta_all_clean[idx - 1][0])
+        y_center = int(meta_all_clean[idx - 1][1])
 
+        #do the cropping and saving 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             if crop_16bit == True:
@@ -105,6 +208,14 @@ def CROP_IMAGES_BLOCK(RAW_INPUT_PATH, OUTPUT_PATH, DATASET, BLOCK, FRAMES, Outpu
                     # write nanowell info
     meta_all_clean_fname = OUTPUT_PATH + DATASET + '/' + BLOCK + '/meta/a_centers_clean.txt'
     write_nanowell_info(meta_all_clean_fname, meta_all_clean)
+
+    # Write the sorted nanowell info for the RC update: -----------------------------------------------------------------------------------------------
+    meta_all_clean_sorted_fname = os.path.join(OUTPUT_PATH,DATASET,BLOCK) + '/meta/a_centers_clean_sorted.txt'
+    RC = 6
+    meta_all_clean_sorted = sort_nanowell(meta_fname, meta_all_clean_fname, meta_all_clean_sorted_fname, RC)
+    meta_all_clean = meta_all_clean_sorted #replace with the sorted ones, crop and then move on. 
+
+    #--------------------------------------------------------------------------------------------------------------------------------------------------
 
     # make directory for images
     total_nanowell = len(meta_all_clean)
