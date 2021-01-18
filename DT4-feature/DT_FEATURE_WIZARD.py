@@ -12,6 +12,24 @@ from skimage import measure
 from collections import Counter
 Size = 6
 
+#for row and column update: 
+def load_nanowells(a_center_fname):
+    '''
+    Update Row and Column Index to match physical location
+    '''
+    f = open(a_center_fname)
+    lines = f.readlines()
+    f.close()
+
+    nanowells = []
+
+    for line in lines:
+        line = line.rstrip().split('\t')
+        line = [float(i) for i in line]
+        nanowells.append(line)
+
+    return nanowells
+
 def DT_FEATURE_EXTRACTOR(OUTPUT_PATH, DATASET, BLOCK, FRAMES, DETECTOR_TYPE, TRACKER_TYPE, PARAMETER, CORES):
     '''
         For Nanowells in each block, create the cell Mask from bbox information.
@@ -313,8 +331,14 @@ def generate_combined_feat_table(OUTPUT_PATH, DATASET, BLOCKS, FRAMES, DETECTOR_
             flag_E = 0
 
 
-            block = int(BID[1:4])
-            [R,C] = No2RC(well_ID, 6)
+            #block = int(BID[1:4])
+            #[R,C] = No2RC(well_ID, 6)
+            
+            sorted_nanowells = load_nanowells(Dataset_Output_Path+ BID + '/meta/a_centers_clean_sorted.txt') ### row column index
+
+            block = int(BID[1:4]) # get the block ID corrected
+            [C,R] = No2RC(int(sorted_nanowells[well_ID-1][4]), 6) #and the corrected rows and columns (the function flips it, so consider this) 
+            
             
             if int(E_count) == 0:
                 flag_E = 1
