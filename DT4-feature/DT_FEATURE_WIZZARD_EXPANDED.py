@@ -33,7 +33,7 @@ def load_nanowells(a_center_fname):
 
     return nanowells
 
-def DT_FEATURE_EXTRACTOR(OUTPUT_PATH, DATASET, BLOCK, FRAMES, DETECTOR_TYPE, TRACKER_TYPE, PARAMETER, CORES):
+def DT_FEATURE_EXTRACTOR_(OUTPUT_PATH, DATASET, BLOCK, FRAMES, DETECTOR_TYPE, TRACKER_TYPE, PARAMETER, CORES):
     '''
         For Nanowells in each block, create the cell Mask from bbox information.
         
