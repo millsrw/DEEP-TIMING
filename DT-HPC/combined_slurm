@@ -18,8 +18,6 @@ echo $SLURM_SUBMIT_DIR
 ulimit -s unlimited
 
 export PATH="/project/cacds/apps/anaconda3/5.0.1/bin/python:$PATH" 
-#"/project/roysam/hlu8/anaconda2/envs/tensorflow-1.10/bin/:$PATH" #RWM: hengyang folder 
-#export PATH="/brazos/varadarajan/deps/anaconda2/bin:$PATH"
 
 # Only Modify the path to the python script in the line below
 cd $SLURM_SUBMIT_DIR
@@ -37,7 +35,6 @@ sed -i "s|projdir|$datadir|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
 # Output Dataset paths
 sed -i "s|resultdir|$outdir|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
 #sed -i "s|resultdir|$outdir|g" Deep-Timing-2.py 
-
 
 # ----NEw edit
 
