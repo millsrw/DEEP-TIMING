@@ -18,7 +18,7 @@ Deep learning algorithms show top performance on image classification and object
   <img src="https://github.com/troylhy1991/DEEP-TIMING/blob/master/imgs/detect_result.PNG" width="400">
 </p>
 
-New addition of phase-contrast based instance segmentation option through Mask R-CNN (https://github.com/matterport/Mask_RCNN)
+New addition of phase-contrast based instance segmentation option through [Mask R-CNN](https://github.com/matterport/Mask_RCNN)
 
 * Label-free apoptosis classification using CNN and LSTM Models
   Implemented state-of-art convolutional neural net classifier. Used reccurent model (LSTM) to improve sequence classification performance considering temporal dependency.
