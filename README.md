@@ -48,7 +48,7 @@ New addition of phase-contrast based instance segmentation option through Mask R
  
  * [test data](https://drive.google.com/drive/folders/1gAyU5QkZNY29x9N8DENkYpeJ_B_6Aqq5?usp=sharing)
  
- (2b) Download Mask R-CNN respository (https://github.com/matterport/Mask_RCNN) and trained weights
+ (2b) Download Mask R-CNN trained weights and save them in /DT2-detector/Cell_Instances/mrcnn/
  
  * [Trained segmentation Weights](https://drive.google.com/file/d/12uQYbTLW2X4AmNavD04LjaVees8gnv9U/view?usp=sharing) 
  
