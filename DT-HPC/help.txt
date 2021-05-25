@@ -1,0 +1,24 @@
+Specific for running in parallel using GPUs on server. 
+
+To run type: ./job_submission_script
+This will promt you to run the pipeline and set the parameters. 
+
+
+When prompted insert data-specific parameters similarly: 
+
+[username@servername DT-HPC]$ ./job_submission_script
+
+Enter Data ID: 20201121_YL_CART_SKOV3
+
+Enter Raw Data path: /project/roysam/rwmills/TIMING/data/
+
+Enter Output Data path: /project/roysam/rwmills/NavinLab/DEEP-TIMING/results/
+
+Enter the starting block number: 1
+
+Enter the ending block number: 81
+
+Enter the number of frames: 80
+
+Enter y or n for segmentation: n
+

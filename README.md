@@ -44,17 +44,20 @@ New addition of phase-contrast based instance segmentation option through [Mask 
 
 (2) Download auxiliary modules and test data, and copy the folders to /HOME_DIRECTORY/DEEP-TIMING/ and to /HOME_DIRECTORY/DEEP-TIMING/DATA/raw/. (create folder DATA and subdirectory /raw/ and /results respectively.)
 
- * [DT2-detector](https://drive.google.com/drive/folders/1Wpe37aHK4fIPuJFnHtGkreXGMnQ1C881?usp=sharing) (for tensorflow v1) 
+* For tensorflow v1: 
+
+  * [DT2-detector](https://drive.google.com/drive/folders/1Wpe37aHK4fIPuJFnHtGkreXGMnQ1C881?usp=sharing)
+  
+  * Download Mask R-CNN original repository (https://github.com/matterport/Mask_RCNN)
+
+ * For tensorflow v2: 
+    * [DT2- detector files](https://drive.google.com/file/d/1R9USSJoKDXA7Wdl_8DqviaB8llpNF6Hl/view?usp=sharing) - insert downloaded files into /DT2-detector/Well/ and /DT2-detector/Cell/ respectively (see help.txt files in each folder) 
+  
  
- * [DT2- detector files](https://drive.google.com/file/d/1R9USSJoKDXA7Wdl_8DqviaB8llpNF6Hl/view?usp=sharing) (for tensorflow v2)- insert downloaded files into /DT2-detector/Well/ and /DT2-detector/Cell/ respectively 
+ * Download sample [test data](https://drive.google.com/drive/folders/1gAyU5QkZNY29x9N8DENkYpeJ_B_6Aqq5?usp=sharing)
  
- * [test data](https://drive.google.com/drive/folders/1gAyU5QkZNY29x9N8DENkYpeJ_B_6Aqq5?usp=sharing)
+ * Save [trained segmentation weights](https://drive.google.com/file/d/12uQYbTLW2X4AmNavD04LjaVees8gnv9U/view?usp=sharing) in /DT2-detector/Cell_Instances/weights/
  
-    Download Mask R-CNN trained weights and save them in /DT2-detector/Cell_Instances/weights/
- 
- * [Trained segmentation Weights](https://drive.google.com/file/d/12uQYbTLW2X4AmNavD04LjaVees8gnv9U/view?usp=sharing) 
- 
- * For tensorflow v1 use Mask R-CNN original repository (https://github.com/matterport/Mask_RCNN)
  
 (3) Download and install [Anaconda](https://www.anaconda.com/download/?lang=en-us)
 
@@ -73,3 +76,15 @@ New addition of phase-contrast based instance segmentation option through [Mask 
 
 ## Contact
 Email: broysam@central.uh.edu
+
+## License 
+Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg

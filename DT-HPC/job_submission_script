@@ -1,0 +1,64 @@
+#!/bin/bash
+
+echo -n "Enter Data ID: "
+read datasetid
+export dataid=$datasetid
+
+grep -q projdir Deep-Timing-1.py
+#if [ $? -eq 0 ] ; then #uncomment if you don't want to ask for full path every run 
+	echo -n "Enter Raw Data path: "
+	read datadir
+	export datadir=$datadir
+
+	echo -n "Enter Output Data path: "
+	read outdir
+	export outdir=$outdir
+#fi
+
+echo -n "Enter the starting block number: "
+read sblk
+export sblk=$sblk
+
+echo -n "Enter the ending block number: "
+read eblk
+export eblk=$eblk
+
+echo -n "Enter the number of frames: "
+read numframes
+export numframes=$numframes
+
+echo -n "Enter y or n for segmentation: "
+read segmentation
+export segmentation=$segmentation
+
+echo -n "Your job for "$dataid" will run" 
+
+mkdir $dataid
+
+# ----NEw edit
+# One time setup - uncoment for one time set up 
+# Input Dataset paths
+#sed -i "s|projdir|$datadir|g" Deep-Timing-1.py 
+#sed -i "s|projdir|$datadir|g" Deep-Timing-2.py 
+# Output Dataset paths
+#sed -i "s|resultdir|$outdir|g" Deep-Timing-1.py 
+#sed -i "s|resultdir|$outdir|g" Deep-Timing-2.py 
+# ----NEw edit
+
+cp combined_slurm $dataid/py_slurm
+cd $dataid
+sed -i "s/sblk/$sblk/g"  py_slurm
+sed -i "s/eblk/$eblk/g"  py_slurm
+sed -i "/central/s/email/$USER/g" ../global_slurm
+
+#sbatch py_slurm>out
+
+#sbatch --dependency=afterok:`awk '{print $4}' out` ../global_slurm
+
+sbatch -J $dataid py_slurm
+
+sbatch -J $dataid --dependency=singleton ../global_slurm
+
+#mv py_slurm out $dataid
+
+#mv slurm-`awk '{print $4}' out` $dataid

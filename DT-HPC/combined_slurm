@@ -1,0 +1,51 @@
+#!/bin/bash
+#SBATCH -N 1 # Number of nodes
+#SBATCH -n 10 # Number of cores
+#SBATCH -t 0-90:00 # Runtime in D-HH:MM
+#SBATCH --array=sblk-eblk #array
+#SBATCH -o slurm-%A.out
+#SBATCH --mem=20GB
+#SBATCH -A roysam
+#SBATCH -p volta
+#SBATCH --gres=gpu:1
+
+
+# The following commands set up the environment 
+date
+echo $SLURM_NNODES
+echo $SLURM_NODELIST
+echo $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+
+export PATH="/project/cacds/apps/anaconda3/5.0.1/bin/python:$PATH" 
+
+# Only Modify the path to the python script in the line below
+cd $SLURM_SUBMIT_DIR
+pwd
+pwd>block_$SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.out
+echo $SLURM_ARRAY_TASK_ID
+cp ../Deep-Timing-1.py $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+#sed -i "s|projdir|$PWD|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py 
+
+# ----NEw edit
+# One time setup - uncoment for one time set up 
+# Input Dataset paths
+sed -i "s|projdir|$datadir|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py 
+#sed -i "s|projdir|$datadir|g" Deep-Timing-2.py 
+# Output Dataset paths
+sed -i "s|resultdir|$outdir|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+#sed -i "s|resultdir|$outdir|g" Deep-Timing-2.py 
+
+# ----NEw edit
+
+sed -i "s/dataid/$dataid/g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+sed -i "s/numframes/$numframes/g"  $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+sed -i 's/melisa/'$((SLURM_ARRAY_TASK_ID-1))'/g' $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+
+#ask for segmentation or normal: 
+sed -i "s|segmentation|$segmentation|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+
+python $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py>>block_$SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.out
+#mv $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py $dataid
+wait
+date

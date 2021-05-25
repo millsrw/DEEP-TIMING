@@ -1,0 +1,60 @@
+#!/bin/bash
+#SBATCH -n 1 # Number of cores
+#SBATCH -N 1 # Number of nodes
+#SBATCH -t 0-90:00 # Runtime in D-HH:MM
+#SBATCH --mail-type=ALL 
+#SBATCH --mail-user=rwmills@central.uh.edu
+#SBATCH --mem=6G
+#SBATCH -A roysam
+#SBATCH -p volta
+#SBATCH --gres=gpu:1
+
+# The following commands set up the environment 
+date
+echo $SLURM_JOB_ID
+echo $SLURM_NNODES
+echo $SLURM_NODELIST
+echo $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+
+export PATH="/project/cacds/apps/anaconda3/5.0.1/bin/python:$PATH" 
+
+export path="$(echo $PWD|awk -F"/" '{print $3}')"
+
+cd $SLURM_SUBMIT_DIR
+
+sleep 100
+
+cp ../Deep-Timing-2.py global_$SLURM_JOB_ID.py
+
+# ----NEw edit
+#sed -i "s|projdir|$datadir|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py 
+sed -i "s|projdir|$datadir|g" global_$SLURM_JOB_ID.py
+# Output Dataset paths
+#sed -i "s|resultdir|$outdir|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+sed -i "s|resultdir|$outdir|g" global_$SLURM_JOB_ID.py
+
+#ask for segmentation or normal: 
+sed -i "s|segmentation|$segmentation|g" $SLURM_ARRAY_JOB_ID$SLURM_ARRAY_TASK_ID.py
+
+# ----NEw edit
+sed -i "s|segmentation|$segmentation|g" global_$SLURM_JOB_ID.py
+sed -i "s/sblk/$sblk/g" global_$SLURM_JOB_ID.py
+sed -i "s/eblk/$eblk/g" global_$SLURM_JOB_ID.py
+sed -i "s/numframes/$numframes/g" global_$SLURM_JOB_ID.py
+sed -i "s/email/$USER/g" global_$SLURM_JOB_ID.py 
+sed -i "s/dataid/$dataid/g" global_$SLURM_JOB_ID.py
+
+
+
+python global_$SLURM_JOB_ID.py >global_$SLURM_JOB_ID.out
+#mv global_$SLURM_JOB_ID.py $dataid
+
+export dataid=
+export numframes=
+export segmentation=
+
+wait
+#conda deactivate
+
+date
